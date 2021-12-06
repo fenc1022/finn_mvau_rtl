@@ -1,0 +1,10 @@
+sv work mvu_stream_tb.sv
+verilog work ../src/mvu_stream/mvu_stream_top.v
+sv work ../src/mvu_stream/mvu_stream.sv
+sv work ../src/mvu_stream/mvu_inp_buffer.sv
+sv work ../src/mvu_stream/mvu_stream_control_block.sv
+sv work ../src/mvu_stream/pe/mvu_pe.sv
+sv work ../src/mvu_stream/pe/mvu_pe_simd.sv
+sv work ../src/mvu_stream/pe/mvu_pe_adders.sv
+sv work ../src/mvu_stream/pe/mvu_pe_popcount.sv
+sv work ../src/mvu_stream/pe/mvu_pe_acc.sv
