@@ -21,7 +21,7 @@ module mvu #(
 
     parameter int MatrixW=KDim*KDim*IFMCh, // Width of the input matrix
     parameter int MatrixH=OFMCh, // Heigth of the input matrix
-    parameter int WMEM_DEPTH=KDim^2*IFMCh*OFMCh/SIMD*PE, // Depth of each weight memory
+    parameter int WMEM_DEPTH=(KDim*KDim*IFMCh*OFMCh)/(SIMD*PE), // Depth of each weight memory
     parameter int TI=SIMD*TSrcI, // SIMD times the word length of input stream
     parameter int TO=PE*TDstI // PE times the word length of output stream   
     // parameter int TA=16, // PE times the word length of the activation class (e.g thresholds)
@@ -103,7 +103,7 @@ mvu_weight_mem_merged #(
     .TW(TW),
     .WMEM_DEPTH(WMEM_DEPTH))
 mvau_weigt_mem_inst(
-    .aclk,
+    .clock,
     .wmem_addr,
     .wmem_out(wmem_out)
 );
@@ -135,7 +135,7 @@ always_ff @(posedge clock)
         out_stream_hold <= out_stream;
 
 // Registered output
-always_ff @(posedge aclk)
+always_ff @(posedge clock)
     if(!resetn)
         out <= 'd0;
     else if(out_v & ~rready)
@@ -149,7 +149,7 @@ always_ff @(posedge aclk)
         out <= out_stream_hold; 
 
 // Output valid
-always_ff @(posedge aclk)
+always_ff @(posedge clock)
     if(!resetn) 
         out_v <= 1'b0;	    	    
     else if(out_stream_valid)

@@ -2,36 +2,17 @@
  *  Generate input, weights & reference behavior output file for MVU rtl test
  *****************************************************************************/
 
-// #include <iostream>
 #include <fstream>
 #include <cstdlib>
-// #include <time.h>
-// #include <cmath>
-// #include <ctime>
 #include <cstring>
 #include <hls_stream.h>
-// #include <cstdlib>
-// #include "ap_int.h"
 #include <weights.hpp>
 #include "bnn-library.h"
-// #include "memdata.h"
 #include "config.h"
-// #include "activations.hpp"
-// #include "weights.hpp"
-// #include "activations.hpp"
-// #include "interpret.hpp"
-// #include "mvau.hpp"
 #include "tb/conv.hpp"
 
 using namespace hls;
 using namespace std;
-
-// #define NUM_IMAGES 1
-// #define NUM_EXECUTIONS 2
-// #define MAX_IMAGES 2 // NUM_IMAGES*NUM_EXECUTIONS
-// void Testbench_mvau_batch1_std(stream<ap_inp<SIMD1*INPUT_PRECISION> > & in,
-// 			       stream<ap_out<PE1*ACTIVATION_PRECISION> > & out);
-//			unsigned int numReps);
 
 int main()
 {
@@ -69,7 +50,7 @@ int main()
     unsigned int ky = 0;
     unsigned int chan_count = 0;
     unsigned int out_chan_count = 0;
-    stream<ap_wgt<SIMD * WEIGHT_PRECISION>> wgt_stream[TY];
+    stream<ap_wgt<SIMD * WEIGHT_PRECISION>> wgt_stream[PE];
     const string wgt_fn = "wgt_mem";
     const string extension = ".mem";
 
@@ -80,8 +61,8 @@ int main()
                 for (unsigned int simd = 0; simd < SIMD; simd++) {
                     ap_wgt<WEIGHT_PRECISION> val = rand() % (1 << WEIGHT_PRECISION);
                     W1[out_chan_count][kx][ky][chan_count] = val; //PARAM::weights.weights(oy * TX + ox)[pe][simd];
-                    ele = ele << WEIGHT_PRECISION;
-                    ele.range(WEIGHT_PRECISION-1, 0) = val;
+                    ele = ele >> WEIGHT_PRECISION;
+                    ele.range(SIMD*WEIGHT_PRECISION-1, (SIMD-1)*WEIGHT_PRECISION) = val;
                     chan_count++;
                     if (chan_count == IFM_Channels)
                     {
@@ -103,13 +84,12 @@ int main()
                         }
                     }
                 }
-                wgt_stream[oy].write(ele);
+                wgt_stream[pe].write(ele);
             }
+            string pe_idx = to_string(pe);
+            string wgt_file = wgt_fn + pe_idx + extension;
+            logStringStream<SIMD * WEIGHT_PRECISION>(wgt_file.c_str(), wgt_stream[pe]);
         }
-
-        string pe_idx = to_string(oy);
-        string wgt_file = wgt_fn + pe_idx + extension;
-        logStringStream<SIMD * WEIGHT_PRECISION>(wgt_file.c_str(), wgt_stream[oy]);
     }
 
 
@@ -124,26 +104,14 @@ int main()
 
     StreamingDataWidthConverter_Batch<IFM_Channels * INPUT_PRECISION, SIMD * INPUT_PRECISION, InpPerImage>(input_stream, wa_in, MMV);
 
-    // ConvolutionInputGenerator<KERNEL_DIM, IFM_Channels, INPUT_PRECISION, IFM_Dim, OFM_Dim, SIMD, 1>
-    //   (wa_in, convInp, MAX_IMAGES, ap_resource_dflt());
+    ConvolutionInputGenerator<KERNEL_DIM, IFM_Channels, INPUT_PRECISION, IFM_Dim, OFM_Dim, SIMD, 1>
+       (wa_in, convInp, MMV, ap_resource_dflt());
 
     // Dumping the input activation stream
-    // logStringStream<SIMD1*INPUT_PRECISION>("inp_act.mem",convInp);
-    logStringStream<SIMD * INPUT_PRECISION>("inp.mem", wa_in);
+    logStringStream<SIMD * INPUT_PRECISION>("inp.mem", convInp);
 
     // Performing Behavioral Convolution
     conv<MMV, IFM_Dim, OFM_Dim, IFM_Channels, OFM_Channels, KERNEL_DIM, STRIDE, ap_inp<INPUT_PRECISION>>(IMAGE, W1, TEST);
-
-    // // Calling the HLS test bench twice to populate the II report
-    // for (int i = 0; i < NUM_EXECUTIONS; i++)
-    // {
-    //     // Testbench_mvau_std(convInp, mvOut);//, MAX_IMAGES);
-    //     Testbench_mvau_batch1_std(wa_in, mvOut); //, MAX_IMAGES);
-    // }
-
-    // // Converting the output stream
-    // StreamingDataWidthConverter_Batch<PE * OUPUT_PRECISION, OFM_Channels * OUPUT_PRECISION,
-    //                                   OFM_Dim * OFM_Dim * (OFM_Channels / PE)>(mvOut, output_stream, MMV);
 
     // File initialization for dumping output activation
     std::ofstream OutAct_File;

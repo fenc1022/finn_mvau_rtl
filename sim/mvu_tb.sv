@@ -10,7 +10,7 @@
 
  `include "mvu_defn.sv" // compile the package file
 
- module mvau_tb_v3;
+ module mvu_tb;
 
     // parameters for controlling the simulation and inserting some delays
     parameter int CLK_PER=20;
@@ -88,16 +88,16 @@
                         if(out_v) begin
                             out_packed = out;
                             for(int k = 0; k < PE; k++) begin
-                                if(out_packed[PE-k-1] == mvau_beh[m][i][j*PE+k]) begin
-                                    $display($time, " PE%d : 0x%0h == Model_%d_%d: 0x%0h",
-                                        k,out_packed[PE-k-1],i,j*PE+k,mvau_beh[m][i][j*PE+k]);
+                                if(out_packed[k] == mvau_beh[m][i][j*PE+k]) begin
+                                    $display($time, " PE%0d : 0x%0h == Model_%0d_%0d: 0x%0h",
+                                        k,out_packed[k],i,j*PE+k,mvau_beh[m][i][j*PE+k]);
                                     test_count++;
                                 end
                                 else begin
-                                    $display($time, " PE%d : 0x%0h != Model_%d_%d: 0x%0h",
-                                        k,out_packed[PE-k-1],i,j*PE+k,mvau_beh[m][i][j*PE+k]);
-                                    assert (out_packed[PE-k-1] == mvau_beh[m][i][j*PE+k])
-                                    else $fatal(1,"Data MisMatch");
+                                    $display($time, " PE%0d : 0x%0h != Model_%0d_%0d: 0x%0h",
+                                        k,out_packed[k],i,j*PE+k,mvau_beh[m][i][j*PE+k]);
+                                    // assert (out_packed[PE-k-1] == mvau_beh[m][i][j*PE+k])
+                                    // else $fatal(1,"Data MisMatch");
                                 end
                             end // for (int k = 0; k < PE; k++)
                         end // if (out_v)
@@ -129,10 +129,10 @@
     always #(CLK_PER/2) aclk = ~aclk;
 
     // populating the input activation matrix from a memory file
-    always @(gen_inp) $readmemh("inp_act.mem", in_mat);
+    always @(gen_inp) $readmemh("inp.mem", in_mat);
 
     // populating the output activation matrix from a memory file
-    always @(do_mvau_beh) $readmemh("out_act.mem",mvau_beh);
+    always @(do_mvau_beh) $readmemh("out.mem",mvau_beh);
 
     // calculating the total run time of simulation in terms of clock cycles
     always_ff @(posedge aclk)
@@ -220,7 +220,7 @@
     end // block: COL_N
 
     // DUT Instantiation
-    mvau_top #(
+    mvu_top #(
         .KDim   (KDim        ),
         .IFMCh  (IFMCh       ),
         .OFMCh  (OFMCh       ),
@@ -230,7 +230,7 @@
         .TW     (TW          ),
         .TDstI  (TDstI       ),
         .OP_SGN (OP_SGN      ))
-    mvau_inst(
+    mvu_inst(
         .aresetn(aresetn),
         .aclk(aclk),
         .m0_axis_tready(rready),

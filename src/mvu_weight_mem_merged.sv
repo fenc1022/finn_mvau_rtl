@@ -17,7 +17,7 @@ module mvu_weight_mem_merged #(
 );
 
 generate
-    for (genvar p; p < PE, p++)
+    for (genvar p = 0; p < PE; p++) begin
         mvu_weight_mem #(
             .PE_ID(p),
             .SIMD(SIMD),
@@ -28,5 +28,7 @@ generate
             .wmem_addr,
             .wmem_out(wmem_out[p])
         );
+    end
+endgenerate
 
 endmodule

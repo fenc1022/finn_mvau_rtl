@@ -13,7 +13,7 @@ module mvu_weight_mem #(
     parameter int WMEM_DEPTH = 4,
     parameter int WMEM_ADDR_BW = $clog2(WMEM_DEPTH)>1 ? $clog2(WMEM_DEPTH) : 1
 ) (
-    input logic                     clock;
+    input logic                     clock,
     input logic [WMEM_ADDR_BW-1:0]  wmem_addr,
     output logic [SIMD*TW-1:0]      wmem_out
 );
@@ -21,12 +21,12 @@ module mvu_weight_mem #(
 (* ram_style = "auto" *)
 logic [SIMD*TW-1:0] weight_mem [0:WMEM_DEPTH-1];
 
-string weight_mem_file = {"weight_mem", str.itoa(PE_ID), ".mem"};
+string weight_mem_file = $sformatf("../sim/wgt_mem%0d.mem", PE_ID);
 
 initial
     $readmemh(weight_mem_file, weight_mem);
 
-always_ff @(posedge clock)
+always_ff @*
     wmem_out <= weight_mem[wmem_addr];
 
 endmodule

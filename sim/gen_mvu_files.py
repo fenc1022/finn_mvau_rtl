@@ -8,20 +8,19 @@ import argparse
 def gen_mvu_files(pe):
     mvu_files = open("mvu_files.prj","wt")
     mvu_files.write("sv work mvu_tb.sv\n")
-    # mvu_files.write("verilog work ../src/mvu_top.v\n")
+    mvu_files.write("verilog work ../src/mvu_top.v\n")
     mvu_files.write("sv work ../src/mvu.sv\n")
     mvu_files.write("sv work ../src/mvu_control_block.sv\n")
-    for p in np.arange(pe):
-        mvu_files.write("sv work ../src/mvu_weight_mem%d.sv\n" % p)
+    mvu_files.write("sv work ../src/mvu_weight_mem.sv\n")
     mvu_files.write("sv work ../src/mvu_weight_mem_merged.sv\n")
     mvu_files.write("sv work ../src/mvu_stream/mvu_stream.sv\n")
     mvu_files.write("sv work ../src/mvu_stream/mvu_inp_buffer.sv\n")
     mvu_files.write("sv work ../src/mvu_stream/mvu_stream_control_block.sv\n")
-    mvu_files.write("sv work ../src/mvu_stream/mvu_pe/mvu_pe.sv\n")
-    mvu_files.write("sv work ../src/mvu_stream/mvu_pe/mvu_pe_simd.sv\n")
-    mvu_files.write("sv work ../src/mvu_stream/mvu_pe/mvu_pe_adders.sv\n")
-    mvu_files.write("sv work ../src/mvu_top/mvu_stream/mvu_pe/mvu_pe_popcount.sv\n")
-    mvu_files.write("sv work ../src/mvu_top/mvu_stream/mvu_pe/mvu_pe_acc.sv\n")
+    mvu_files.write("sv work ../src/mvu_stream/pe/mvu_pe.sv\n")
+    mvu_files.write("sv work ../src/mvu_stream/pe/mvu_pe_simd.sv\n")
+    mvu_files.write("sv work ../src/mvu_stream/pe/mvu_pe_adders.sv\n")
+    mvu_files.write("sv work ../src/mvu_stream/pe/mvu_pe_popcount.sv\n")
+    mvu_files.write("sv work ../src/mvu_stream/pe/mvu_pe_acc.sv\n")
     mvu_files.close()
 
 def parser():

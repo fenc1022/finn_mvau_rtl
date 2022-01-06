@@ -31,6 +31,9 @@ def gen_mvau_defn(pad, stride, kdim, iwl, ifmc, ofmc, ifmd, wwl, op_sgn, owl, si
     mvau_defn.write("    parameter int OFMDim = (IFMDim-KDim+2*PAD)/STRIDE+1; // Output feature map dimensions\n")
     mvau_defn.write("    parameter int MatrixW = KDim*KDim*IFMCh; // Width of the input matrix\n")
     mvau_defn.write("    parameter int MatrixH = OFMCh; // Heigth of the input matrix\n")
+    mvau_defn.write("    parameter int ACT_MatrixW = OFMDim*OFMDim; // input activation matrix height\n")
+    mvau_defn.write("    parameter int ACT_MatrixH = (KDim*KDim*IFMCh); // input activation matrix weight\n")
+
     mvau_defn.write("    parameter int TI = SIMD*TSrcI; // SIMD times the word length of input stream\n")
     mvau_defn.write("    parameter int TO = PE*TDstI; // PE times the word length of output stream   \n")
     mvau_defn.write("    parameter int WMEM_DEPTH = (KDim*KDim*IFMCh*OFMCh)/(SIMD*PE); // Depth of each weight memory\n")
