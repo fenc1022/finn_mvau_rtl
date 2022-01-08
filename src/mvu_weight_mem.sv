@@ -21,12 +21,22 @@ module mvu_weight_mem #(
 (* ram_style = "auto" *)
 logic [SIMD*TW-1:0] weight_mem [0:WMEM_DEPTH-1];
 
-string weight_mem_file = $sformatf("../sim/wgt_mem%0d.mem", PE_ID);
+localparam int PE_TENS = PE_ID / 10;
+localparam int PE_ONES = PE_ID % 10;
 
-initial
+bit [15:0] fn_pe;
+bit [20*8-1:0] weight_mem_file ;
+
+initial begin
+    fn_pe[15:8] = PE_TENS + 48; // int to ascii
+    fn_pe[7:0] = PE_ONES + 48; // int to ascii
+    weight_mem_file[20*8-1:6*8] = "../sim/wgt_mem";
+    weight_mem_file[6*8-1:4*8] = fn_pe;
+    weight_mem_file[4*8-1:0] = ".mem";
     $readmemh(weight_mem_file, weight_mem);
+end
 
-always_ff @*
+always_comb
     wmem_out <= weight_mem[wmem_addr];
 
 endmodule

@@ -9,6 +9,7 @@
  `timescale 1ns/1ns
 
  `include "mvu_defn.sv" // compile the package file
+ import mvu_defn::*; // import package into $unit compilation space
 
  module mvu_tb;
 

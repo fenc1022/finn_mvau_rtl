@@ -45,7 +45,6 @@ def gen_mvau_defn(pad, stride, kdim, iwl, ifmc, ofmc, ifmd, wwl, op_sgn, owl, si
     mvau_defn.write("    parameter int USE_ACT=0;     // Use activation after matrix-vector activation\n")
     mvau_defn.write("endpackage\n")
     mvau_defn.write("    \n")
-    mvau_defn.write("    import mvu_defn::*; // import package into $unit compilation space\n")
     mvau_defn.write("`endif\n")
 
     mvau_defn.close()

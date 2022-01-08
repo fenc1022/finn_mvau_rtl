@@ -18,6 +18,15 @@ In order to run simulation and synthesis, set the following two environmental va
 
 ## Simulation
 - To simulate the MVU by RTL testbench which generate all necessory input, run mvu_stream_tb.sh.
-- To simulate the MVU and peripheral RAM interface, run mvu_tb.sh. This testbench is run by Vivado HLS and utilizing the hlslib generated input/output to testify designed module. 
+- To simulate the MVU and peripheral RAM interface, run mvu_tb.sh. This testbench leverages the hlslib generated input/output to testify designed module. 
 
 ## Building RTL and HLS Hardware Design and Analysis
+- To synthesis the project, go through simulation process first to generate all necessary files.
+- In syn directory, use following command to synthesis MVU stream module only.
+```
+vivado -mode batch -source mvu_stream_synth.tcl
+```
+- In syn directory, use following command to synthesis the whole MVU module.
+```
+vivado -mode batch -source mvu_synth.tcl
+```

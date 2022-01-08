@@ -7,16 +7,16 @@ rm -f *.mem
 rm -rf *.log *.jou *.str *.zip *.pd *.debug *~
 rm -rf hls-data-gen
 
-ifm_ch=${2:-8}
-ifm_dim=${3:-3}
-ofm_ch=${4:-4}
-kdim=${5:-2}
+ifm_ch=${2:-64}
+ifm_dim=${3:-16}
+ofm_ch=${4:-64}
+kdim=${5:-4}
 inp_wl=${6:-4}
-wgt_wl=${7:-4}
+wgt_wl=${7:-1}
 op_sgn=${8:-0}
-out_wl=${9:-16}
-simd=${10:-4}
-pe=${11:-4}
+out_wl=${9:-15}
+simd=${10:-16}
+pe=${11:-32}
 pad=${12:-0}
 stride=${13:-1}
 mmv=${14:-1}

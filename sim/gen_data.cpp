@@ -53,6 +53,7 @@ int main()
     stream<ap_wgt<SIMD * WEIGHT_PRECISION>> wgt_stream[PE];
     const string wgt_fn = "wgt_mem";
     const string extension = ".mem";
+    char pe_buf[2];
 
     for (unsigned int oy = 0; oy < TY; oy++) {
         for (unsigned int pe = 0; pe < PE; pe++) {
@@ -86,7 +87,8 @@ int main()
                 }
                 wgt_stream[pe].write(ele);
             }
-            string pe_idx = to_string(pe);
+            sprintf(pe_buf, "%02d", pe);
+            string pe_idx(pe_buf);
             string wgt_file = wgt_fn + pe_idx + extension;
             logStringStream<SIMD * WEIGHT_PRECISION>(wgt_file.c_str(), wgt_stream[pe]);
         }
